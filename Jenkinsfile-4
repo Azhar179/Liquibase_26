@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        LIQUIBASE_HOME = 'C:/liquibase'  // Adjust Liquibase installation path
-        DB_URL = 'jdbc:mysql://localhost:3306/twenty_six'
+        LIQUIBASE_HOME = 'C:/liquibase' // Path where Liquibase is installed
+        DB_URL = 'jdbc:mysql://localhost:3306/your_database'
         DB_USERNAME = 'root'
         DB_PASSWORD = 'root'
         DB_DRIVER = 'com.mysql.cj.jdbc.Driver'
@@ -12,23 +12,24 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                // Clone the GitHub repository
                 git url: 'https://github.com/Azhar179/Liquibase_26.git', branch: 'master'
             }
         }
-        stage('Verify File Location') {
+        stage('List Files') {
             steps {
-                // List all files in the workspace to confirm the changelog file exists
+                // Verify that the changelog-master.xml is in the workspace
                 bat 'dir /s'
             }
         }
         stage('Update Database') {
             steps {
                 script {
-                    // Try the Liquibase update
+                    // Reference the local path of changelog-master.xml in the Jenkins workspace
+                    def changelogFile = "${WORKSPACE}/26-9/src/main/resources/db/changelog/changelog-master.xml"
+
                     bat """
                     cd ${LIQUIBASE_HOME}
-                    liquibase --changeLogFile=https://github.com/Azhar179/Liquibase_26/blob/master/26-9/src/main/resources/db/changelog/changelog-master.xml ^
+                    liquibase --changeLogFile=${changelogFile} ^
                               --url=${DB_URL} ^
                               --username=${DB_USERNAME} ^
                               --password=${DB_PASSWORD} ^

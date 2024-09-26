@@ -2,24 +2,30 @@ pipeline {
     agent any
 
     environment {
-        LIQUIBASE_HOME = 'C:/liquibase'  // Adjust the path to your Liquibase installation
-        LIQUIBASE_CHANGELOG = 'src/main/resources/db/changelog/changelog-master.xml'  // Path to changelog file
-        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/twenty_six'  // Your database URL
-        LIQUIBASE_USERNAME = 'root'  // Your database username
-        LIQUIBASE_PASSWORD = 'root'  // Your database password
-        LIQUIBASE_DRIVER = 'com.mysql.cj.jdbc.Driver'  // Your database driver (adjust as needed)
+        LIQUIBASE_HOME = 'C:/path/to/liquibase'  // Path to Liquibase installation
+        LIQUIBASE_CHANGELOG = 'src/main/resources/db/changelog/changelog-master.xml'  // Relative path from GitHub repo
+        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/your_database'  // Database URL
+        LIQUIBASE_USERNAME = 'root'  // DB username
+        LIQUIBASE_PASSWORD = 'root'  // DB password
+        LIQUIBASE_DRIVER = 'com.mysql.cj.jdbc.Driver'  // Database driver
     }
 
     stages {
+        stage('Checkout') {
+            steps {
+                // Clone GitHub repo
+                git url: 'https://github.com/your-repo.git', branch: 'main'
+            }
+        }
         stage('Update Database') {
             steps {
                 script {
                     bat """
                     cd ${LIQUIBASE_HOME}
-                    liquibase --changeLogFile=${LIQUIBASE_CHANGELOG} \\
-                              --url=${LIQUIBASE_URL} \\
-                              --username=${LIQUIBASE_USERNAME} \\
-                              --password=${LIQUIBASE_PASSWORD} \\
+                    liquibase --changeLogFile=${LIQUIBASE_CHANGELOG} ^
+                              --url=${LIQUIBASE_URL} ^
+                              --username=${LIQUIBASE_USERNAME} ^
+                              --password=${LIQUIBASE_PASSWORD} ^
                               --driver=${LIQUIBASE_DRIVER} update
                     """
                 }

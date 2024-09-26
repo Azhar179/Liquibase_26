@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         LIQUIBASE_HOME = 'C:/liquibase'  // Adjust Liquibase installation path
-        DB_URL = 'jdbc:mysql://localhost:3306/twenty_six'
+        DB_URL = 'jdbc:mysql://localhost:3306/your_database'
         DB_USERNAME = 'root'
         DB_PASSWORD = 'root'
         DB_DRIVER = 'com.mysql.cj.jdbc.Driver'
@@ -14,6 +14,12 @@ pipeline {
             steps {
                 // Clone the GitHub repository
                 git url: 'https://github.com/Azhar179/Liquibase_26.git', branch: 'master'
+            }
+        }
+        stage('Verify Files') {
+            steps {
+                // List files in the workspace to verify that the changelog file exists
+                bat 'dir /s'  // For Windows: Recursively list files in workspace
             }
         }
         stage('Update Database') {

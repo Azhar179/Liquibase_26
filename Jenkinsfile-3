@@ -1,0 +1,38 @@
+pipeline {
+    agent any
+
+    environment {
+        LIQUIBASE_HOME = 'C:/liquibase'  // Adjust the path to your Liquibase installation
+        LIQUIBASE_CHANGELOG = 'src/main/resources/db/changelog/changelog-master.xml'  // Path to changelog file
+        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/twenty_six'  // Your database URL
+        LIQUIBASE_USERNAME = 'root'  // Your database username
+        LIQUIBASE_PASSWORD = 'root'  // Your database password
+        LIQUIBASE_DRIVER = 'com.mysql.cj.jdbc.Driver'  // Your database driver (adjust as needed)
+    }
+
+    stages {
+        stage('Update Database') {
+            steps {
+                script {
+                    bat """
+                    cd ${LIQUIBASE_HOME}
+                    liquibase --changeLogFile=${LIQUIBASE_CHANGELOG} \\
+                              --url=${LIQUIBASE_URL} \\
+                              --username=${LIQUIBASE_USERNAME} \\
+                              --password=${LIQUIBASE_PASSWORD} \\
+                              --driver=${LIQUIBASE_DRIVER} update
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Liquibase update completed successfully.'
+        }
+        failure {
+            echo 'Liquibase update failed.'
+        }
+    }
+}

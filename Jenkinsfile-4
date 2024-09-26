@@ -28,7 +28,7 @@ pipeline {
                     // Try the Liquibase update
                     bat """
                     cd ${LIQUIBASE_HOME}
-                    liquibase --changeLogFile=src/main/resources/db/changelog/changelog-master.xml ^
+                    liquibase --changeLogFile=https://github.com/Azhar179/Liquibase_26/blob/master/26-9/src/main/resources/db/changelog/changelog-master.xml ^
                               --url=${DB_URL} ^
                               --username=${DB_USERNAME} ^
                               --password=${DB_PASSWORD} ^

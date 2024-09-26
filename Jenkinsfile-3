@@ -1,18 +1,18 @@
 pipeline {
     agent any
+
     environment {
-        LIQUIBASE_HOME = 'C:/liquibase'
-        LIQUIBASE_CHANGELOG = 'src/main/resources/db/changelog/changelog-master.xml'
-        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/twenty_six'
-        LIQUIBASE_USERNAME = 'root'
-        LIQUIBASE_PASSWORD = 'root'
-        LIQUIBASE_DRIVER = 'com.mysql.cj.jdbc.Driver'
+        LIQUIBASE_HOME = 'C:/liquibase'  // Adjust Liquibase installation path
+        DB_URL = 'jdbc:mysql://localhost:3306/twenty_six'
+        DB_USERNAME = 'root'
+        DB_PASSWORD = 'root'
+        DB_DRIVER = 'com.mysql.cj.jdbc.Driver'
     }
 
     stages {
         stage('Checkout') {
             steps {
-                // Use the correct GitHub repository URL
+                // Clone the GitHub repository
                 git url: 'https://github.com/Azhar179/Liquibase_26.git', branch: 'master'
             }
         }
@@ -21,11 +21,11 @@ pipeline {
                 script {
                     bat """
                     cd ${LIQUIBASE_HOME}
-                    liquibase --changeLogFile=${LIQUIBASE_CHANGELOG} ^
-                              --url=${LIQUIBASE_URL} ^
-                              --username=${LIQUIBASE_USERNAME} ^
-                              --password=${LIQUIBASE_PASSWORD} ^
-                              --driver=${LIQUIBASE_DRIVER} update
+                    liquibase --changeLogFile=src/main/resources/db/changelog/changelog-master.xml ^
+                              --url=${DB_URL} ^
+                              --username=${DB_USERNAME} ^
+                              --password=${DB_PASSWORD} ^
+                              --driver=${DB_DRIVER} update
                     """
                 }
             }

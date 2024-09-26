@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        LIQUIBASE_HOME = 'C:/path/to/liquibase'
+        LIQUIBASE_HOME = 'C:\liquibase'
         LIQUIBASE_CHANGELOG = 'src/main/resources/db/changelog/changelog-master.xml'
-        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/your_database'
+        LIQUIBASE_URL = 'jdbc:mysql://localhost:3306/twenty_six'
         LIQUIBASE_USERNAME = 'root'
         LIQUIBASE_PASSWORD = 'root'
         LIQUIBASE_DRIVER = 'com.mysql.cj.jdbc.Driver'

@@ -1,0 +1,17 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Liquibase Task') {
+            steps {
+                script {
+                    def liquibaseHome = tool 'liquibase'
+
+                    withEnv(["LIQUIBASE_HOME=${liquibaseHome}"]) {
+                        sh "liquibase --changeLogFile=src/main/resources/db/changelog/changelog-master.xml update"
+                    }
+                }
+            }
+        }
+    }
+}

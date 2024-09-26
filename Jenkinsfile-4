@@ -1,0 +1,50 @@
+pipeline {
+    agent any
+
+    environment {
+        LIQUIBASE_HOME = 'C:/liquibase'  // Adjust Liquibase installation path
+        DB_URL = 'jdbc:mysql://localhost:3306/twenty_six'
+        DB_USERNAME = 'root'
+        DB_PASSWORD = 'root'
+        DB_DRIVER = 'com.mysql.cj.jdbc.Driver'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                // Clone the GitHub repository
+                git url: 'https://github.com/Azhar179/Liquibase_26.git', branch: 'master'
+            }
+        }
+        stage('Verify File Location') {
+            steps {
+                // List all files in the workspace to confirm the changelog file exists
+                bat 'dir /s'
+            }
+        }
+        stage('Update Database') {
+            steps {
+                script {
+                    // Try the Liquibase update
+                    bat """
+                    cd ${LIQUIBASE_HOME}
+                    liquibase --changeLogFile=src/main/resources/db/changelog/changelog-master.xml ^
+                              --url=${DB_URL} ^
+                              --username=${DB_USERNAME} ^
+                              --password=${DB_PASSWORD} ^
+                              --driver=${DB_DRIVER} update
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Liquibase update completed successfully.'
+        }
+        failure {
+            echo 'Liquibase update failed.'
+        }
+    }
+}
